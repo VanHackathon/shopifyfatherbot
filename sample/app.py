@@ -29,7 +29,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
         if chat_type == 'private' and content_type == 'text':
             text_in = msg['text']
             text = ''
-            if text_in == '/create' or text_in == '/start':   #user may be restarting flow
+            if text_in == '/new_shop' or text_in == '/start':   #user may be restarting flow
                 self.temp_bot = Shop()
                 text = 'Great! Please send me your Shopify API key'
             elif text_in == '/delete':
