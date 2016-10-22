@@ -13,6 +13,7 @@ class Shop(object):
         self.shopify_api_password = ''
         self.shopify_hostname = ''
         self.telegram_api_key = ''
+        self.pid = None
 
 
 class CreateShopBot(telepot.helper.ChatHandler):
@@ -44,8 +45,8 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 for shop in self.list_shops:
                     if shop.shopify_hostname == text_in:
                         self.list_shops.remove(shop)
+                        run_generic_store.kill_store(pid=shop.pid, folder_name=shop.telegram_api_key.split[':'][0])
                         break
-                #TODO matar processo e apagar pasta
             elif self.temp_bot.shopify_api_key == '':
                 self.temp_bot.shopify_api_key = text_in
                 text = 'Great! Now send me your Shopify API password'
@@ -58,12 +59,13 @@ class CreateShopBot(telepot.helper.ChatHandler):
             elif self.temp_bot.telegram_api_key == '':
                 self.temp_bot.telegram_api_key = text_in
                 bot.sendMessage(chat_id=chat_id, text='Done! Let me create your bot for you, give me a minute...')
-                success = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
-                                                             shopify_api_key=self.temp_bot.shopify_api_key,
-                                                             shopify_api_password=self.temp_bot.shopify_api_password,
-                                                             shopify_hostname=self.temp_bot.shopify_hostname,
-                                                             telegram_api_key=self.temp_bot.telegram_api_key)
-                if success:
+                pid = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
+                                                         shopify_api_key=self.temp_bot.shopify_api_key,
+                                                         shopify_api_password=self.temp_bot.shopify_api_password,
+                                                         shopify_hostname=self.temp_bot.shopify_hostname,
+                                                         telegram_api_key=self.temp_bot.telegram_api_key)
+                if pid:
+                    self.temp_bot.pid = pid
                     self.list_shops.append(copy.copy(self.temp_bot))
                     self.shop_names.append(self.temp_bot.shopify_hostname)
                     self.temp_bot = Shop()
