@@ -1,5 +1,5 @@
 from fabric.api import local
-from fabric.contrib import files
+import os
 
 
 def create_new_store(bot_name, shopify_api_key, shopify_api_password, shopify_hostname, telegram_api_key):
@@ -14,4 +14,4 @@ def create_new_store(bot_name, shopify_api_key, shopify_api_password, shopify_ho
 
 
 def exist_bot(bot_name):
-    return files.exists(path='/home/ubuntu/%s' % bot_name, use_sudo=False, verbose=False)
+    return os.path.exists('/home/ubuntu/%s' % bot_name)
