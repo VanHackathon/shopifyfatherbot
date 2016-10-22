@@ -34,7 +34,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.telegram_api_key = text
                 text = 'Done! Let me create your bot for you, give me a minute...'
 
-            if msg != None and msg != '':
+            if text is not None:
                 bot.sendMessage(chat_id=chat_id, text=text)
 
     def clear_attributes(self):
