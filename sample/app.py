@@ -27,33 +27,33 @@ class CreateShopBot(telepot.helper.ChatHandler):
 
         print msg
         if chat_type == 'private' and content_type == 'text':
-            text = msg['text']
-            if text == '/create' or text == '/start':   #user may be restarting flow
+            text_in = msg['text']
+            if text_in == '/create' or text_in == '/start':   #user may be restarting flow
                 self.temp_bot = Shop()
                 text = 'Great! Please send me your Shopify API key'
-            elif text == '/delete':
+            elif text_in == '/delete':
                 bot.sendMessage(chat_id=chat_id,
                                 text='Which shop would you like to delete?',
                                 reply_markup=self.get_shops_keyboard())
-            elif text in self.shop_names:
-                self.shop_names.remove(text)
+            elif text_in in self.shop_names:
+                self.shop_names.remove(text_in)
                 for shop in self.list_shops:
-                    if shop.shopify_hostname == text:
+                    if shop.shopify_hostname == text_in:
                         self.list_shops.remove(shop)
                         break
                 #TODO matar processo e apagar pasta
             elif self.temp_bot.shopify_api_key == '':
-                self.temp_bot.shopify_api_key = text
+                self.temp_bot.shopify_api_key = text_in
                 text = 'Great! Now send me your Shopify API password'
             elif self.temp_bot.shopify_api_password == '':
-                self.temp_bot.shopify_api_password = text
+                self.temp_bot.shopify_api_password = text_in
                 text = 'Great! Now send me your Shopify hostname'
             elif self.temp_bot.shopify_hostname == '':
-                self.temp_bot.shopify_hostname = text
+                self.temp_bot.shopify_hostname = text_in
                 text = 'Great! Now send me your Telegram bot key'
             elif self.temp_bot.telegram_api_key == '':
-                self.temp_bot.telegram_api_key = text
-                text = 'Done! Let me create your bot for you, give me a minute...'
+                self.temp_bot.telegram_api_key = text_in
+                bot.sendMessage(text='Done! Let me create your bot for you, give me a minute...')
                 success = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
                                                              shopify_api_key=self.temp_bot.shopify_api_key,
                                                              shopify_api_password=self.temp_bot.shopify_api_password,
