@@ -53,7 +53,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 text = 'Great! Now send me your Telegram bot key'
             elif self.temp_bot.telegram_api_key == '':
                 self.temp_bot.telegram_api_key = text_in
-                bot.sendMessage(text='Done! Let me create your bot for you, give me a minute...')
+                bot.sendMessage(chat_id=chat_id, text='Done! Let me create your bot for you, give me a minute...')
                 success = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
                                                              shopify_api_key=self.temp_bot.shopify_api_key,
                                                              shopify_api_password=self.temp_bot.shopify_api_password,
