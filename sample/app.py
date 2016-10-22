@@ -58,7 +58,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.temp_bot.shopify_hostname = text_in
                 text = 'Great! Now send me your Telegram bot key'
             elif self.temp_bot.telegram_api_key == '':
-                temp = re.search(r'[0-9]{1,}:\w*', text) # look for a telegram API pattern
+                temp = re.search(r'[0-9]{1,}:\w*', text) # look for a telegram API pattern TODO use this pattern to validate api key
                 if temp:
                     text_in = text[temp.start() : temp.end()]
                 self.temp_bot.telegram_api_key = text_in
