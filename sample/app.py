@@ -33,9 +33,12 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.temp_bot = Shop()
                 text = 'Great! Please send me your Shopify API key'
             elif text_in == '/delete':
-                bot.sendMessage(chat_id=chat_id,
-                                text='Which shop would you like to delete?',
-                                reply_markup=self.get_shops_keyboard())
+                if len(self.list_shops) == 0:
+                    text = "Ops, you don't have any shops! Try creating one with /new_shop"
+                else:
+                    bot.sendMessage(chat_id=chat_id,
+                                    text='Which shop would you like to delete?',
+                                    reply_markup=self.get_shops_keyboard())
             elif text_in in self.shop_names:
                 self.shop_names.remove(text_in)
                 for shop in self.list_shops:
