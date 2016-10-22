@@ -28,6 +28,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
         print msg
         if chat_type == 'private' and content_type == 'text':
             text_in = msg['text']
+            text = ''
             if text_in == '/create' or text_in == '/start':   #user may be restarting flow
                 self.temp_bot = Shop()
                 text = 'Great! Please send me your Shopify API key'
@@ -67,7 +68,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 else:
                     text = "Ops, something went wrong. Please try again :("
 
-            if text is not None:
+            if text != '':
                 bot.sendMessage(chat_id=chat_id, text=text)
 
     def get_shops_keyboard(self):
