@@ -77,7 +77,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
         for shop in self.list_shops:
             keyboard.append([KeyboardButton(text=shop.shopify_hostname)])
 
-        return ReplyKeyboardMarkup(keyboard=keyboard)
+        return ReplyKeyboardMarkup(keyboard=keyboard, one_time_keyboard=True)
 
 
 TOKEN = sys.argv[1]
