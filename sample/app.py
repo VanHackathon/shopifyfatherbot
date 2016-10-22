@@ -5,6 +5,7 @@ from telepot.delegate import pave_event_space, per_chat_id, create_open
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 import time
 import sys
+import re
 
 
 class Shop(object):
@@ -57,6 +58,9 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.temp_bot.shopify_hostname = text_in
                 text = 'Great! Now send me your Telegram bot key'
             elif self.temp_bot.telegram_api_key == '':
+                temp = re.search(r'[0-9]{1,}:\w*', text) # look for a telegram API pattern TODO use this pattern to validate api key
+                if temp:
+                    text_in = text[temp.start() : temp.end()]
                 self.temp_bot.telegram_api_key = text_in
                 bot.sendMessage(chat_id=chat_id, text='Done! Let me create your bot for you, give me a minute...')
                 result = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
