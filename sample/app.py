@@ -26,13 +26,13 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 text = 'Great! Now send me your Shopify API password'
             elif self.shopify_api_password == '':
                 self.shopify_api_password = text
-                text='Great! Now send me your Shopify hostname'
+                text = 'Great! Now send me your Shopify hostname'
             elif self.shopify_hostname == '':
                 self.shopify_hostname = text
-                text='Great! Now send me your Telegram bot key'
+                text = 'Great! Now send me your Telegram bot key'
             elif self.telegram_api_key == '':
                 self.telegram_api_key = text
-                text='Done! Let me create your bot for you, give me a minute...'
+                text = 'Done! Let me create your bot for you, give me a minute...'
 
             if msg != None and msg != '':
                 bot.sendMessage(chat_id=chat_id, text=text)
