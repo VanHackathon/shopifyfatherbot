@@ -14,5 +14,5 @@ def create_new_store(bot_name, shopify_api_key, shopify_api_password, shopify_ho
 
 
 def kill_store(telegram_api_key):
-    local('kill $(ps aux | grep [p]ython | grep %s)' % telegram_api_key)
+    local("kill $(ps aux | grep [p]ython | grep %s | awk '{print $2}')" % telegram_api_key)
     local('rm -rf %s' % telegram_api_key.split(':')[0])
