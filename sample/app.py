@@ -33,16 +33,19 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 text = 'Great! Now send me your Telegram bot key'
             elif self.telegram_api_key == '':
                 self.telegram_api_key = text
-                text = 'Done! Let me create your bot for you, give me a minute...'
-                success = run_generic_store.create_new_store(bot_name=self.telegram_api_key.split(':')[0],
-                                                             shopify_api_key=self.shopify_api_key,
-                                                             shopify_api_password=self.shopify_api_password,
-                                                             shopify_hostname=self.shopify_hostname,
-                                                             telegram_api_key=self.telegram_api_key)
-                if success:
-                    text = "Hoorray! You're new telegram store is online and running!"
+                if run_generic_store.exist_bot(text):
+                    text = 'Ops! I seems you have already created this store!'
                 else:
-                    text = "Ops, something went wrong. Please try again :("
+                    text = 'Done! Let me create your bot for you, give me a minute...'
+                    success = run_generic_store.create_new_store(bot_name=self.telegram_api_key.split(':')[0],
+                                                                 shopify_api_key=self.shopify_api_key,
+                                                                 shopify_api_password=self.shopify_api_password,
+                                                                 shopify_hostname=self.shopify_hostname,
+                                                                 telegram_api_key=self.telegram_api_key)
+                    if success:
+                        text = "Hoorray! You're new telegram store is online and running!"
+                    else:
+                        text = "Ops, something went wrong. Please try again :("
 
             if text is not None:
                 bot.sendMessage(chat_id=chat_id, text=text)
