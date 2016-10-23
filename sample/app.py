@@ -54,7 +54,8 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.temp_bot = Shop()
                 self.temp_bot.state = States.WAITING_SHOP_API
                 text = "Let's build a new Shopify bot shop! Yay!\n" \
-                       "Please send me your Shopify API key"
+                       "Please send me your Shopify API key\n" \
+                       "Get it from shopify.com"
             elif text_in == '/help':
                 self.temp_bot = Shop()
                 text = "Greetings! I'm Shopify Father Bot, I take care of your Shopify telegram Shop.\n\n" \
