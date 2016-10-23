@@ -3,7 +3,7 @@ from os import path
 import run_generic_store
 import telepot
 from telepot.delegate import pave_event_space, per_chat_id, create_open
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardHide
 import time
 import shopify
 import sys
@@ -40,7 +40,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
             if text_in == '/cancel':
                 text = 'Action canceled'
                 self.temp_bot = Shop()
-            elif text_in == '/delete':
+            elif text_in == '/remove':
                 self.temp_bot = Shop()
                 if len(self.list_shops) == 0:
                     text = "Ops, you don't have any shops! Try creating one with /new_shop"
@@ -48,22 +48,25 @@ class CreateShopBot(telepot.helper.ChatHandler):
                     self.temp_bot = Shop()
                     self.temp_bot.state = States.DELETING
                     bot.sendMessage(chat_id=chat_id,
-                                    text='Which shop would you like to delete?',
+                                    text='Which shop would you like to remove?',
                                     reply_markup=self.get_shops_keyboard())
             elif text_in == '/new_shop' or text_in == '/start':
                 self.temp_bot = Shop()
                 self.temp_bot.state = States.WAITING_SHOP_API
-                text = 'Great! Please send me your Shopify API key'
+                text = "Let's build a new Shopify bot shop! Yay!\n" \
+                       "Please send me your Shopify API key"
             elif text_in[0] == '/':
-                text = 'Command unknown'
+                self.temp_bot.state = Shop()
+                text = "Sorry, I don't know that command :(\n" \
+                       "Please check /help"
             elif self.temp_bot.state == States.WAITING_SHOP_API:
                 self.temp_bot.shopify_api_key = text_in
                 self.temp_bot.state = States.WAITING_SHOP_PASS
-                text = 'Great! Now send me your Shopify API password'
+                text = 'Good, now please send me your Shopify API password'
             elif self.temp_bot.state == States.WAITING_SHOP_PASS:
                 self.temp_bot.shopify_api_password = text_in
                 self.temp_bot.state = States.WAITING_HOSTNAME
-                text = 'Great! Now send me your Shopify hostname'
+                text = 'Ok, now send me your Shopify hostname'
             elif self.temp_bot.state == States.WAITING_HOSTNAME:
                 shop_url = 'https://%s:%s@%s.myshopify.com/admin' %\
                            (self.temp_bot.telegram_api_key, self.temp_bot.shopify_api_password, text_in)
@@ -74,9 +77,10 @@ class CreateShopBot(telepot.helper.ChatHandler):
                     shopify.Shop.current()
                     self.temp_bot.shopify_hostname = text_in
                     self.temp_bot.state = States.WAITING_TELEGRAM_API
-                    text = 'Great! Now send me your Telegram bot key'
+                    text = 'Lastly, send me your Telegram bot token or simply forward me the @BotFather token message'
                 except:
-                    text = 'Ops! Something went wrong. Please check your API key, API password, hostname and try again!'
+                    text = 'Ops! Something went wrong. Please check your Shopify API key, API password,' \
+                           'hostname and try again!'
                     self.temp_bot = Shop()  #cleaning up
             elif self.temp_bot.state == States.WAITING_TELEGRAM_API:
                 temp = re.search(r'[0-9]{1,}:\w*', text_in) # look for a telegram API pattern TODO use this pattern to validate api key
@@ -91,12 +95,14 @@ class CreateShopBot(telepot.helper.ChatHandler):
                         try:
 #                           checking if bot works
                             bot_checking = telepot.Bot(text_in)
-                            bot_checking.getMe()
+                            new_bot = bot_checking.getMe()
 
                             self.temp_bot.telegram_api_key = text_in
 
                             bot.sendMessage(chat_id=chat_id,
-                                            text='Done! Let me create your bot for you, give me a minute...')
+                                            text='Ok, now let me do some magic and your Shopify store bot,\
+                                            give me a second...',
+                                            reply_markup=ReplyKeyboardHide())
                             result = run_generic_store.create_new_store(
                                 bot_name=self.temp_bot.telegram_api_key.split(':')[0],
                                 shopify_api_key=self.temp_bot.shopify_api_key,
@@ -106,13 +112,14 @@ class CreateShopBot(telepot.helper.ChatHandler):
                             if result:
                                 self.list_shops.append(copy.copy(self.temp_bot))
                                 self.shop_names.append(self.temp_bot.shopify_hostname)
-                                text = "Hoorray! You're new telegram store is online and running!"
+                                text = "Hoorray! You're new telegram store is online and running!" \
+                                       "Check it at @%s" % new_bot['username']
                             else:
                                 text = "Ops, something went wrong. Please try again :("
                         except:
-                            text = "Ops! That doesn't look like a valid telegram API key :("
+                            text = "Ops! That doesn't look like a valid telegram token :("
                 else:
-                    text = "Ops! That doesn't look like a valid telegram API key :("
+                    text = "Ops! That doesn't look like a valid telegram token :("
 
                 self.temp_bot = Shop()
             elif self.temp_bot.state == States.DELETING:
@@ -122,7 +129,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                         if shop.shopify_hostname == text_in:
                             self.list_shops.remove(shop)
                             run_generic_store.kill_store(shop.telegram_api_key)
-                            text = '%s successfully deleted' & text_in
+                            text = '%s successfully removed' & text_in
                             break
                 else:
                     text = "Sorry, but that shop does't exist!"
@@ -132,7 +139,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 text = "Sorry, I did't understand :(\nPlease check /help"
 
             if text != '':
-                bot.sendMessage(chat_id=chat_id, text=text)
+                bot.sendMessage(chat_id=chat_id, text=text, reply_markup=ReplyKeyboardHide())
 
     def get_shops_keyboard(self):
         keyboard = []
