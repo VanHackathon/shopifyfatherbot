@@ -128,6 +128,8 @@ class CreateShopBot(telepot.helper.ChatHandler):
                     text = "Sorry, but that shop does't exist!"
 
                 self.temp_bot = Shop()
+            else:
+                text = "Sorry, I did't understand :(\nPlease check /help"
 
             if text != '':
                 bot.sendMessage(chat_id=chat_id, text=text)
