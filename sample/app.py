@@ -1,4 +1,5 @@
 import copy
+from os import path
 import run_generic_store
 import telepot
 from telepot.delegate import pave_event_space, per_chat_id, create_open
@@ -73,30 +74,34 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 if temp:
                     text_in = text_in[temp.start(): temp.end()]
 
-#                   checking if bot works
-                    try:
-                        bot_checking = telepot.Bot(text_in)
-                        bot_checking.getMe()
+#                   checking if bot is already running
+                    if path.isdir(text_in.split(':')[0]):
+                        text = "Ops! It looks like that bot is already in use. Please remove it before adding it again"
+                    else:
+                        try:
+#                           checking if bot works
+                            bot_checking = telepot.Bot(text_in)
+                            bot_checking.getMe()
 
-                        self.temp_bot.telegram_api_key = text_in
+                            self.temp_bot.telegram_api_key = text_in
 
-                        bot.sendMessage(chat_id=chat_id,
-                                        text='Done! Let me create your bot for you, give me a minute...')
-                        result = run_generic_store.create_new_store(
-                            bot_name=self.temp_bot.telegram_api_key.split(':')[0],
-                            shopify_api_key=self.temp_bot.shopify_api_key,
-                            shopify_api_password=self.temp_bot.shopify_api_password,
-                            shopify_hostname=self.temp_bot.shopify_hostname,
-                            telegram_api_key=self.temp_bot.telegram_api_key)
-                        if result:
-                            self.list_shops.append(copy.copy(self.temp_bot))
-                            self.shop_names.append(self.temp_bot.shopify_hostname)
-                            self.temp_bot = Shop()
-                            text = "Hoorray! You're new telegram store is online and running!"
-                        else:
-                            text = "Ops, something went wrong. Please try again :("
-                    except:
-                        text = "Ops! That doesn't look like a valid telegram API key :("
+                            bot.sendMessage(chat_id=chat_id,
+                                            text='Done! Let me create your bot for you, give me a minute...')
+                            result = run_generic_store.create_new_store(
+                                bot_name=self.temp_bot.telegram_api_key.split(':')[0],
+                                shopify_api_key=self.temp_bot.shopify_api_key,
+                                shopify_api_password=self.temp_bot.shopify_api_password,
+                                shopify_hostname=self.temp_bot.shopify_hostname,
+                                telegram_api_key=self.temp_bot.telegram_api_key)
+                            if result:
+                                self.list_shops.append(copy.copy(self.temp_bot))
+                                self.shop_names.append(self.temp_bot.shopify_hostname)
+                                self.temp_bot = Shop()
+                                text = "Hoorray! You're new telegram store is online and running!"
+                            else:
+                                text = "Ops, something went wrong. Please try again :("
+                        except:
+                            text = "Ops! That doesn't look like a valid telegram API key :("
                 else:
                     text = "Ops! That doesn't look like a valid telegram API key :("
 
