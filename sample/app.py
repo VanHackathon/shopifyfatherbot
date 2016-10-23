@@ -40,7 +40,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
             if text_in == '/cancel':
                 text = 'Action canceled'
                 self.temp_bot = Shop()
-            elif text_in == '/delete':
+            elif text_in == '/remove':
                 self.temp_bot = Shop()
                 if len(self.list_shops) == 0:
                     text = "Ops, you don't have any shops! Try creating one with /new_shop"
@@ -48,7 +48,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                     self.temp_bot = Shop()
                     self.temp_bot.state = States.DELETING
                     bot.sendMessage(chat_id=chat_id,
-                                    text='Which shop would you like to delete?',
+                                    text='Which shop would you like to remove?',
                                     reply_markup=self.get_shops_keyboard())
             elif text_in == '/new_shop' or text_in == '/start':
                 self.temp_bot = Shop()
@@ -124,7 +124,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                         if shop.shopify_hostname == text_in:
                             self.list_shops.remove(shop)
                             run_generic_store.kill_store(shop.telegram_api_key)
-                            text = '%s successfully deleted' & text_in
+                            text = '%s successfully removed' & text_in
                             break
                 else:
                     text = "Sorry, but that shop does't exist!"
