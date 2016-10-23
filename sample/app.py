@@ -3,7 +3,7 @@ from os import path
 import run_generic_store
 import telepot
 from telepot.delegate import pave_event_space, per_chat_id, create_open
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardHide
 import time
 import shopify
 import sys
@@ -55,6 +55,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 self.temp_bot.state = States.WAITING_SHOP_API
                 text = 'Great! Please send me your Shopify API key'
             elif text_in[0] == '/':
+                self.temp_bot.state = Shop()
                 text = 'Command unknown'
             elif self.temp_bot.state == States.WAITING_SHOP_API:
                 self.temp_bot.shopify_api_key = text_in
@@ -96,7 +97,8 @@ class CreateShopBot(telepot.helper.ChatHandler):
                             self.temp_bot.telegram_api_key = text_in
 
                             bot.sendMessage(chat_id=chat_id,
-                                            text='Done! Let me create your bot for you, give me a minute...')
+                                            text='Done! Let me create your bot for you, give me a minute...',
+                                            reply_markup=ReplyKeyboardHide())
                             result = run_generic_store.create_new_store(
                                 bot_name=self.temp_bot.telegram_api_key.split(':')[0],
                                 shopify_api_key=self.temp_bot.shopify_api_key,
@@ -132,7 +134,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 text = "Sorry, I did't understand :(\nPlease check /help"
 
             if text != '':
-                bot.sendMessage(chat_id=chat_id, text=text)
+                bot.sendMessage(chat_id=chat_id, text=text, reply_markup=ReplyKeyboardHide())
 
     def get_shops_keyboard(self):
         keyboard = []
