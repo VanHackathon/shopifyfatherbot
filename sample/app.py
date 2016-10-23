@@ -43,13 +43,6 @@ class CreateShopBot(telepot.helper.ChatHandler):
                     bot.sendMessage(chat_id=chat_id,
                                     text='Which shop would you like to delete?',
                                     reply_markup=self.get_shops_keyboard())
-            elif text_in in self.shop_names:
-                self.shop_names.remove(text_in)
-                for shop in self.list_shops:
-                    if shop.shopify_hostname == text_in:
-                        self.list_shops.remove(shop)
-                        run_generic_store.kill_store(shop.telegram_api_key)
-                        break
             elif self.temp_bot.shopify_api_key == '':
                 self.temp_bot.shopify_api_key = text_in
                 text = 'Great! Now send me your Shopify API password'
@@ -104,6 +97,13 @@ class CreateShopBot(telepot.helper.ChatHandler):
                             text = "Ops! That doesn't look like a valid telegram API key :("
                 else:
                     text = "Ops! That doesn't look like a valid telegram API key :("
+            elif text_in in self.shop_names:
+                self.shop_names.remove(text_in)
+                for shop in self.list_shops:
+                    if shop.shopify_hostname == text_in:
+                        self.list_shops.remove(shop)
+                        run_generic_store.kill_store(shop.telegram_api_key)
+                        break
 
             if text != '':
                 bot.sendMessage(chat_id=chat_id, text=text)
