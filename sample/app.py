@@ -61,20 +61,33 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 temp = re.search(r'[0-9]{1,}:\w*', text_in) # look for a telegram API pattern TODO use this pattern to validate api key
                 if temp:
                     text_in = text_in[temp.start(): temp.end()]
-                self.temp_bot.telegram_api_key = text_in
-                bot.sendMessage(chat_id=chat_id, text='Done! Let me create your bot for you, give me a minute...')
-                result = run_generic_store.create_new_store(bot_name=self.temp_bot.telegram_api_key.split(':')[0],
-                                                            shopify_api_key=self.temp_bot.shopify_api_key,
-                                                            shopify_api_password=self.temp_bot.shopify_api_password,
-                                                            shopify_hostname=self.temp_bot.shopify_hostname,
-                                                            telegram_api_key=self.temp_bot.telegram_api_key)
-                if result:
-                    self.list_shops.append(copy.copy(self.temp_bot))
-                    self.shop_names.append(self.temp_bot.shopify_hostname)
-                    self.temp_bot = Shop()
-                    text = "Hoorray! You're new telegram store is online and running!"
+
+#                   checking if bot works
+                    try:
+                        bot_checking = telepot.Bot(text_in)
+                        bot_checking.getMe()
+
+                        self.temp_bot.telegram_api_key = text_in
+
+                        bot.sendMessage(chat_id=chat_id,
+                                        text='Done! Let me create your bot for you, give me a minute...')
+                        result = run_generic_store.create_new_store(
+                            bot_name=self.temp_bot.telegram_api_key.split(':')[0],
+                            shopify_api_key=self.temp_bot.shopify_api_key,
+                            shopify_api_password=self.temp_bot.shopify_api_password,
+                            shopify_hostname=self.temp_bot.shopify_hostname,
+                            telegram_api_key=self.temp_bot.telegram_api_key)
+                        if result:
+                            self.list_shops.append(copy.copy(self.temp_bot))
+                            self.shop_names.append(self.temp_bot.shopify_hostname)
+                            self.temp_bot = Shop()
+                            text = "Hoorray! You're new telegram store is online and running!"
+                        else:
+                            text = "Ops, something went wrong. Please try again :("
+                    except:
+                        text = "Ops! That doesn't look like a valid telegram API key :("
                 else:
-                    text = "Ops, something went wrong. Please try again :("
+                    text = "Ops! That doesn't look like a valid telegram API key :("
 
             if text != '':
                 bot.sendMessage(chat_id=chat_id, text=text)
