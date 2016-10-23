@@ -93,7 +93,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                            'hostname and try again!'
                     self.temp_bot = Shop()  #cleaning up
             elif self.temp_bot.state == States.WAITING_TELEGRAM_API:
-                temp = re.search(r'[0-9]{1,}:\w*', text_in) # look for a telegram API pattern TODO use this pattern to validate api key
+                temp = re.search(r'[0-9]{1,}:[a-zA-Z0-9._-]*', text_in) # look for a telegram API pattern TODO use this pattern to validate api key
                 if temp:
                     text_in = text_in[temp.start(): temp.end()]
 
