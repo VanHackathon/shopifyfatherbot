@@ -40,6 +40,7 @@ class CreateShopBot(telepot.helper.ChatHandler):
                 if len(self.list_shops) == 0:
                     text = "Ops, you don't have any shops! Try creating one with /new_shop"
                 else:
+                    self.temp_bot = Shop()
                     bot.sendMessage(chat_id=chat_id,
                                     text='Which shop would you like to delete?',
                                     reply_markup=self.get_shops_keyboard())
